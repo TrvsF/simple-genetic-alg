@@ -8,6 +8,11 @@ public class Genome {
         this.genome = generateGenome();
     }
 
+    // this is the worst thing ive ever written
+    public Genome(Genome genome) {
+        this.genome = genome.getGenome();
+    }
+
     public void setGenome(int[] genome) {
         this.genome = genome;
     }
