@@ -8,6 +8,14 @@ public class Genome {
         this.genome = generateGenome();
     }
 
+    public void setGenome(int[] genome) {
+        this.genome = genome;
+    }
+
+    public int[] getGenome() {
+        return this.genome;
+    }
+
     private int[] generateGenome() {
         int[] value = new int[8];
         for (int i = 0; i < value.length; i++) {

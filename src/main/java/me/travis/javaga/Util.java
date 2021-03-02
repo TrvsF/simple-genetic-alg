@@ -1,5 +1,6 @@
 package me.travis.javaga;
 
+import java.util.List;
 import java.util.Random;
 
 public class Util {
@@ -52,6 +53,29 @@ public class Util {
                 return 7;
         }
         return 0;
+    }
+
+    private static int getTotalFitness(List<Genome> pop) {
+        int total = 0;
+        for (Genome g : pop) {
+            total += g.getFitness();
+        }
+        return total;
+    }
+
+    public static double getAverageFitness(List<Genome> pop) {
+        return (double) getTotalFitness(pop) / pop.size();
+    }
+
+    public static Genome getBestGenome(List<Genome> pop) {
+        Genome best = null;
+        int bestFitness = 0;
+        for (Genome g : pop) {
+            if (g.getFitness() > bestFitness) {
+                best = g;
+            }
+        }
+        return best;
     }
 
 }
