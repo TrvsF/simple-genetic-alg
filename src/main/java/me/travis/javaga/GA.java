@@ -28,9 +28,10 @@ public class GA {
 
     public static void main(String[] args) {
 
+        populate();
+
         for (int i = 0; i < loops; i++) {
             generation++;
-            populate();
             printPopulation();
             checkLandmarks();
             removeDeadGenomes();
@@ -66,7 +67,7 @@ public class GA {
 
             }
 
-            if (parent1 == parent2) continue;
+            if (parent1 == parent2 || parent1 == null || parent2 == null) continue;
 
             crossover(parent1, parent2);
         }
@@ -102,9 +103,14 @@ public class GA {
     }
 
     private static void printPopulation() {
+        int total = 0;
         for (Genome g : population) {
             g.printValue();
+            total += g.getFitness();
         }
+        System.out.println("Total Fitness : " + total);
+        System.out.println("Total pop : " + population.size());
+        System.out.println("==========================");
     }
 
     private static void removeDeadGenomes() {
@@ -119,7 +125,7 @@ public class GA {
 
     private static void checkLandmarks() {
 
-        Genome best = Util.getBestGenome(population);
+        Genome best = new Genome(Util.getBestGenome(population));
         double bestAvg = Util.getAverageFitness(population);
 
         if (best.getFitness() > bestFitness) {
