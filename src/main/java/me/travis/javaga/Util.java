@@ -11,6 +11,18 @@ public class Util {
         return random.nextInt(2);
     }
 
+    public static int getRandomIntFromPop(int size) {
+        return random.nextInt(size);
+    }
+
+    public static int getCrossoverPoint() {
+        return random.nextInt(8) + 1;
+    }
+
+    public static Genome getRandomGenomeFromPop(List<Genome> pop) {
+        return pop.get(random.nextInt(pop.size()));
+    }
+
     public static int getWeight(int i) {
         switch (i) {
             case 0:
