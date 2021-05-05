@@ -5,7 +5,28 @@ import java.util.Random;
 
 public class Util {
 
+    private static int[] genomeWeights;
+    private static int[] genomeValues;
+
     private static final Random random = new Random();
+
+    public static void initGenomeWeights(int size) {
+        genomeWeights = new int[size];
+        for (int i = 0; i < genomeWeights.length; i++) {
+            genomeWeights[i] = randomInt(5, 50);
+        }
+    }
+
+    public static void initGenomeValues(int size) {
+        genomeValues = new int[size];
+        for (int i = 0; i < genomeValues.length; i++) {
+            genomeValues[i] = randomInt(10, 50);
+        }
+    }
+
+    public static int randomInt(int min, int max) {
+        return min + random.nextInt(max - min + 1);
+    }
 
     public static int oneOrZero() {
         return random.nextInt(2);
@@ -24,47 +45,11 @@ public class Util {
     }
 
     public static int getWeight(int i) {
-        switch (i) {
-            case 0:
-                return 31;
-            case 1:
-                return 34;
-            case 2:
-                return 9;
-            case 3:
-                return 6;
-            case 4:
-                return 23;
-            case 5:
-                return 12;
-            case 6:
-                return 17;
-            case 7:
-                return 24;
-        }
-        return 0;
+        return genomeWeights[i];
     }
 
     public static int getValue(int i) {
-        switch (i) {
-            case 0:
-                return 23;
-            case 1:
-                return 34;
-            case 2:
-                return 2;
-            case 3:
-                return 21;
-            case 4:
-                return 12;
-            case 5:
-                return 31;
-            case 6:
-                return 16;
-            case 7:
-                return 7;
-        }
-        return 0;
+        return genomeValues[i];
     }
 
     private static int getTotalFitness(List<Genome> pop) {

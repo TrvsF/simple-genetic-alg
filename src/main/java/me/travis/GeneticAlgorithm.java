@@ -2,6 +2,7 @@ package me.travis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GeneticAlgorithm {
 
@@ -16,9 +17,10 @@ public class GeneticAlgorithm {
     private static int generation           = 0;
 
     // rates
-    private final static int crossoverRate  = 10; // fraction of pop to crossover
-    private final static int mutationRate   = 30; // fraction of pop to mutate
+    private final static int crossoverRate  = 5; // fraction of pop to crossover (1/5)
+    private final static int mutationRate   = 30; // fraction of pop to mutate (1/30)
 
+    private static final int genomeSize = 20; // size of genome
     private static final int loops = 10000;
     private static final int initPopulation = 100;
 
@@ -26,8 +28,28 @@ public class GeneticAlgorithm {
 
     public static void main(String[] args) {
 
-        populate();
+        Util.initGenomeValues(genomeSize);
+        Util.initGenomeWeights(genomeSize);
 
+        int i = 1;
+        while (i == 1) {
+            try {
+                doAlg();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("input '1' to try again with same values");
+            Scanner scan = new Scanner(System.in);
+            i = scan.nextInt();
+        }
+    }
+
+    public static void doAlg() {
+        if (!population.isEmpty()) {
+            population.clear();
+        }
+        populate();
         for (int i = 0; i < loops; i++) {
             generation++;
             printPopulation();
@@ -37,9 +59,7 @@ public class GeneticAlgorithm {
             mutate();
             refill();
         }
-
         printStats();
-
     }
 
     private static void tourneySelection() {
@@ -86,13 +106,13 @@ public class GeneticAlgorithm {
 
     private static void refill() {
         for (int i = 0; i < initPopulation - population.size(); i++) {
-            population.add(new Genome());
+            population.add(new Genome(genomeSize));
         }
     }
 
     private static void populate() {
         for (int i = 0; i < initPopulation; i++) {
-            population.add(new Genome());
+            population.add(new Genome(genomeSize));
         }
     }
 
