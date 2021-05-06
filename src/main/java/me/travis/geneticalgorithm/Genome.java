@@ -1,28 +1,23 @@
-package me.travis.javaga;
+package me.travis.geneticalgorithm;
 
 public class Genome {
 
-    private int[] genome;
+    private final int[] genome;
 
-    public Genome() {
-        this.genome = generateGenome();
+    public Genome(int size) {
+        this.genome = generateGenome(size);
     }
 
-    // this is the worst thing ive ever written
     public Genome(Genome genome) {
-        this.genome = genome.getGenome();
-    }
-
-    public void setGenome(int[] genome) {
-        this.genome = genome;
+        this.genome = genome.getGenome().clone();
     }
 
     public int[] getGenome() {
         return this.genome;
     }
 
-    private int[] generateGenome() {
-        int[] value = new int[8];
+    private int[] generateGenome(int size) {
+        int[] value = new int[size];
         for (int i = 0; i < value.length; i++) {
             value[i] = Util.oneOrZero();
         }
@@ -30,13 +25,24 @@ public class Genome {
     }
 
     public void printValue() {
-        String v = String.format("%d%d%d%d%d%d%d%d",this.genome[0],this.genome[1],this.genome[2],this.genome[3],this.genome[4],this.genome[5],this.genome[6],this.genome[7]);
-        System.out.print("value=" + v + " : fitness=" + this.getFitness());
+        StringBuilder v = new StringBuilder();
+        for (int g : this.genome) {
+            v.append(g);
+        }
+        System.out.print("value=" + v.toString() + " : fitness=" + this.getFitness());
         System.out.println();
     }
 
+    public String getGenomeAsString() {
+        StringBuilder v = new StringBuilder();
+        for (int g : this.genome) {
+            v.append(g);
+        }
+        return v.toString();
+    }
+
     public int getFitness() {
-        return (this.getWeight() > GA.weightLimit ? 0 : this.getValue());
+        return (this.getWeight() > GeneticAlgorithm.weightLimit ? 0 : this.getValue());
     }
 
     private int getValue() {

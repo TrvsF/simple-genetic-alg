@@ -1,56 +1,74 @@
-package me.travis.javaga;
+package me.travis.geneticalgorithm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-public class GA {
+public class GeneticAlgorithm {
 
     public static int weightLimit = 100;
 
     // averages and stats
     private static Genome bestGenome        = null;
-    private static double bestAvgFit        = 0;
-    private static int bestAvgGen           = 0;
-    private static int bestFitnessGen       = 0;
-    private static int bestFitness          = 0;
+    private static int bestGeneration       = 0;
+    private static int timesSeenBest        = 0;
 
     // counter
     private static int generation           = 0;
 
     // rates
-    private final static int crossoverRate  = 10; // fraction of pop to crossover
-    private final static int mutationRate   = 30; // fraction of pop to mutate
+    private final static int crossoverRate  = 5; // fraction of pop to crossover (1/5)
+    private final static int mutationRate   = 30; // fraction of pop to mutate (1/30)
 
-    private static final int loops = 10;
-    private static final int initPopulation = 10;
+    private static final int genomeSize = 20; // size of genome
+    private static final int loops = 10000;
+    private static final int initPopulation = 100;
 
     private static final List<Genome> population = new ArrayList<>();
 
     public static void main(String[] args) {
 
-        populate();
+        Util.initGenomeValues(genomeSize);
+        Util.initGenomeWeights(genomeSize);
 
+        int i = 1;
+        while (i == 1) {
+            try {
+                doAlg();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("input '1' to try again with same values");
+            Scanner scan = new Scanner(System.in);
+            i = scan.nextInt();
+        }
+    }
+
+    public static void doAlg() {
+        if (!population.isEmpty()) {
+            population.clear();
+        }
+        generation = 0;
+        bestGeneration = 0;
+        timesSeenBest = 0;
+        populate();
         for (int i = 0; i < loops; i++) {
             generation++;
             printPopulation();
-            checkLandmarks();
+            checkStats();
             removeDeadGenomes();
             tourneySelection();
             mutate();
             refill();
         }
-
         printStats();
-
     }
 
     private static void tourneySelection() {
-
         for (int i = 0; i < population.size() / crossoverRate; i++) {
-
             Genome parent1 = null;
             Genome parent2 = null;
-
             for (int j = 0; j < 2; j++) { // do this twice to get 2 parents
                 int x = Util.getRandomIntFromPop(population.size());
                 int y = Util.getRandomIntFromPop(population.size());
@@ -64,11 +82,9 @@ public class GA {
                 } else {
                     parent2 = winner;
                 }
-
             }
 
             if (parent1 == parent2 || parent1 == null || parent2 == null) continue;
-
             crossover(parent1, parent2);
         }
     }
@@ -92,13 +108,13 @@ public class GA {
 
     private static void refill() {
         for (int i = 0; i < initPopulation - population.size(); i++) {
-            population.add(new Genome());
+            population.add(new Genome(genomeSize));
         }
     }
 
     private static void populate() {
         for (int i = 0; i < initPopulation; i++) {
-            population.add(new Genome());
+            population.add(new Genome(genomeSize));
         }
     }
 
@@ -108,6 +124,7 @@ public class GA {
             g.printValue();
             total += g.getFitness();
         }
+        System.out.println("Current Generation : " + generation);
         System.out.println("Total Fitness : " + total);
         System.out.println("Total pop : " + population.size());
         System.out.println("==========================");
@@ -123,34 +140,24 @@ public class GA {
         population.removeAll(deadGenomes);
     }
 
-    private static void checkLandmarks() {
-
+    private static void checkStats() {
+        if (Util.getBestGenome(population) == null) return;
         Genome best = new Genome(Util.getBestGenome(population));
-        double bestAvg = Util.getAverageFitness(population);
-
-        if (best.getFitness() > bestFitness) {
-            bestFitness = best.getFitness();
+        if (best.getFitness() > (bestGenome == null ? 0 : bestGenome.getFitness())) {
             bestGenome = best;
-            bestFitnessGen = generation;
+            bestGeneration = generation;
+            timesSeenBest = 0;
         }
-        if (bestAvg > bestAvgFit) {
-            bestAvgFit = bestAvg;
-            bestAvgGen = generation;
+        if (best.getFitness() == (bestGenome == null ? 0 : bestGenome.getFitness())) {
+            timesSeenBest++;
         }
-
     }
 
     private static void printStats() {
-
-        System.out.println("BEST FITNESS : " + bestFitness);
-        System.out.println("BEST GENOME : ");
-        bestGenome.printValue();
-        System.out.println("GENERATION FOUND : " + bestFitnessGen);
-
-        System.out.println("==========================");
-
-        System.out.println("BEST AVERAGE FITNESS : " + bestFitness);
-        System.out.println("BEST AVERAGE FITNESS GEN : " + bestAvgGen);
+        System.out.println("BEST GENOME : " + bestGenome.getGenomeAsString());
+        System.out.println("TIMES SEEN BEST GENOME " + timesSeenBest);
+        System.out.println("BEST FITNESS : " + bestGenome.getFitness());
+        System.out.println("BEST GENERATION : " + bestGeneration);
     }
 
 }

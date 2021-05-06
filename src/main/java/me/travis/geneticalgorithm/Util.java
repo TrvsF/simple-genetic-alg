@@ -1,4 +1,4 @@
-package me.travis;
+package me.travis.geneticalgorithm;
 
 import java.util.List;
 import java.util.Random;
